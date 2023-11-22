@@ -14,7 +14,7 @@ public class TestLauncher {
     public static void main(String[] args) {
         Launcher launcher = LauncherFactory.create();
 //        launcher.registerLauncherDiscoveryListeners();
-//        launcher.registerLauncherDiscoveryListeners();
+//        launcher.registerTestExecutionListeners();
 
         var summaryGeneratedListener = new SummaryGeneratingListener(); //дает статистику по пройденым тестам
 
