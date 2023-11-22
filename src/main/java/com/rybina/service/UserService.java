@@ -1,8 +1,6 @@
 package com.rybina.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class UserService {
     private List<User> users = new ArrayList<>();
@@ -13,5 +11,10 @@ public class UserService {
 
     public void add(User user) {
         users.add(user);
+    }
+
+    public Optional<User> login(String name, String password) {
+        if(name == null || password == null) throw new IllegalArgumentException("username or password is null");
+        return users.stream().filter(user -> Objects.equals(user.getName(), password) && Objects.equals(user.getPassword(), password)).findFirst();
     }
 }
