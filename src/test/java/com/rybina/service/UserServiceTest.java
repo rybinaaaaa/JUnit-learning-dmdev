@@ -1,12 +1,16 @@
 package com.rybina.service;
 
-import org.assertj.core.api.Assertions;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.collection.IsMapContaining;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 //эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
@@ -30,8 +34,8 @@ public class UserServiceTest {
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
-        Assertions.assertThat(users).hasSize(0);
-        Assertions.assertThat(users).isEmpty();
+        assertThat(users, hasSize(0));
+        assertThat(users, empty());
 //        Assertions.assertTrue(user.isEmpty(), () -> "List should be empty");
     }
 
@@ -49,8 +53,8 @@ public class UserServiceTest {
 
 //        Надо делать так потому, что иначе после первого неверного Assertions юнит тест прекращается и не проверяет след Assertions
         assertAll(
-                () -> Assertions.assertThat(userMap).containsKey(0),
-                () -> Assertions.assertThat(users).hasSize(2)
+                () -> MatcherAssert.assertThat(userMap, IsMapContaining.hasKey(0)),
+                () -> MatcherAssert.assertThat(users, hasSize(2))
         );
     }
 
