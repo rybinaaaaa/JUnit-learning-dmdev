@@ -7,7 +7,7 @@ import java.util.List;
 public class UserService {
     private List<User> users = new ArrayList<>();
 
-    public List getAll() {
+    public List<User> getAll() {
         return users;
     }
 
