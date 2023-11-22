@@ -4,7 +4,7 @@ import org.junit.jupiter.api.*;
 
 //эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class UserServiceTest {
+public class UserServiceTest {
     UserService userService;
 
     @BeforeAll
