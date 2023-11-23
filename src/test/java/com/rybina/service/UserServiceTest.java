@@ -50,7 +50,7 @@ public class UserServiceTest {
 
     @Test
 //    @Order(0) для @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//    @DisplayName("name")
+//    @DisplayName("name") для MethodOrderer.DisplayName.class
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
@@ -77,47 +77,6 @@ public class UserServiceTest {
         );
     }
 
-    @Test
-    @Tag("login")
-    void loginSuccessIfUserExists() {
-        userService.add(user1);
-        Optional<User> user = userService.login(user1.getName(), user1.getPassword());
-        assertThat(user).isPresent();
-        user.ifPresent(u -> assertEquals(u, user1));
-    }
-
-    @Test
-    @Tag("login")
-    void loginFailIfPasswordIncorrect() {
-        userService.add(user1);
-        Optional<User> user = userService.login(user1.getName(), "dummy");
-        assertThat(user).isEmpty();
-    }
-
-    @Test
-    @Tag("login")
-    void loginFailIfNameIncorrect() {
-        userService.add(user1);
-        Optional<User> user = userService.login("dummy", user1.getPassword());
-        assertThat(user).isEmpty();
-    }
-
-    @Test
-    @Tag("login")
-    void throwExceptionWhenUserPasswordIsNull() {
-//         try {
-//            userService.login("test", null);
-//            fail("login should throw an exception when password is null");
-//        } catch (IllegalArgumentException ex) {
-//            assertTrue(true);
-//        }
-
-        assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> userService.login("test", null)),
-                () -> assertThrows(IllegalArgumentException.class, () -> userService.login(null, "test"))
-        );
-    }
-
     @AfterEach
     void deleteDataFromDataBase() {
         System.out.println("After Each");
@@ -126,5 +85,50 @@ public class UserServiceTest {
     @AfterAll
     void closeConnectionPool() {
         System.out.println("After All");
+    }
+
+    @Nested
+    @Tag("login")
+    class LoginTest {
+        @Test
+        @Tag("login")
+        void loginSuccessIfUserExists() {
+            userService.add(user1);
+            Optional<User> user = userService.login(user1.getName(), user1.getPassword());
+            assertThat(user).isPresent();
+            user.ifPresent(u -> assertEquals(u, user1));
+        }
+
+        @Test
+        @Tag("login")
+        void loginFailIfPasswordIncorrect() {
+            userService.add(user1);
+            Optional<User> user = userService.login(user1.getName(), "dummy");
+            assertThat(user).isEmpty();
+        }
+
+        @Test
+        @Tag("login")
+        void loginFailIfNameIncorrect() {
+            userService.add(user1);
+            Optional<User> user = userService.login("dummy", user1.getPassword());
+            assertThat(user).isEmpty();
+        }
+
+        @Test
+        @Tag("login")
+        void throwExceptionWhenUserPasswordIsNull() {
+//         try {
+//            userService.login("test", null);
+//            fail("login should throw an exception when password is null");
+//        } catch (IllegalArgumentException ex) {
+//            assertTrue(true);
+//        }
+
+            assertAll(
+                    () -> assertThrows(IllegalArgumentException.class, () -> userService.login("test", null)),
+                    () -> assertThrows(IllegalArgumentException.class, () -> userService.login(null, "test"))
+            );
+        }
     }
 }
