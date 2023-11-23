@@ -3,13 +3,17 @@ package com.rybina.service;
 import com.rybina.paramResolver.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 //эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
@@ -28,7 +32,7 @@ public class UserServiceTest {
     TestInfo testInfo;
 
     private static final User user1 = new User("test1", "test1", 1);
-    private static final User user2 = new User("test1", "test1", 2);
+    private static final User user2 = new User("test2", "test2", 2);
 
     public UserServiceTest(TestInfo testInfo) {
         this.testInfo = testInfo;
@@ -130,5 +134,40 @@ public class UserServiceTest {
                     () -> assertThrows(IllegalArgumentException.class, () -> userService.login(null, "test"))
             );
         }
+
+        @ParameterizedTest(name = "{arguments} test")
+//        Редко используемые
+//        @ArgumentsSource() - мы должны передать сюда класс implements ArgumentsProvider
+//        для NullSource, EmptySource, ValueSource, NullAndEmptySource допустим только один параметр!!!!
+//        @NullSource - подставляет null в параметр
+//        @EmptySource - подходит для массивов (в том числе для строк)
+//        @NullAndEmptySource
+//        @ValueSource(strings = {"name1", "name2"}) - по очереди вызовет фцию с name1 - 1 и с name2 - 2
+//        @EnumSource
+
+//        Часто используемый
+//        @MethodSource("com.rybina.service.UserServiceTest#getArgsForLoginTest")
+
+//        не можем передавать сложные данные в Csv
+//        @CsvFileSource(resources = "/login-test-data.csv", delimiter = ',', numLinesToSkip = 1)
+        @CsvSource({
+                "test1, test1",
+                "test2, test2"
+        })
+        void loginParametrizedText(String name, String password) {
+            userService.add(user1, user2);
+
+            Optional<User> user = userService.login(name, password);
+            assertThat(user).isPresent();
+        }
+    }
+
+    static Stream<Arguments> getArgsForLoginTest() {
+        return Stream.of(
+                Arguments.of(user1.getName(), user1.getPassword(), Optional.of(user1)),
+                Arguments.of(user2.getName(), user2.getPassword(), Optional.of(user2)),
+                Arguments.of(user2.getName(), "dummy", Optional.empty()),
+                Arguments.of("dummy", user2.getPassword(), Optional.empty())
+        );
     }
 }
