@@ -1,20 +1,16 @@
 package com.rybina.service;
 
 import com.rybina.paramResolver.UserServiceParamResolver;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.collection.IsMapContaining;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 //эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
 @Tag("user")
@@ -27,6 +23,9 @@ public class UserServiceTest {
     UserService userService;
     TestInfo testInfo;
 
+    private static final User user1 = new User("test1", "test1", 1);
+    private static final User user2 = new User("test1", "test1", 2);
+
     public UserServiceTest(TestInfo testInfo) {
         this.testInfo = testInfo;
         System.out.println(testInfo);
@@ -38,7 +37,7 @@ public class UserServiceTest {
     }
 
 
-//  ++ DI
+    //  ++ DI
     @BeforeEach
     void prepare(UserService userService) {
         System.out.println("Before Each");
@@ -49,15 +48,15 @@ public class UserServiceTest {
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
-        assertThat(users, hasSize(0));
-        assertThat(users, empty());
+        assertThat(users).hasSize(0);
+        assertThat(users).isEmpty();
 //        Assertions.assertTrue(user.isEmpty(), () -> "List should be empty");
     }
 
     @Test
     void UsesSizeIfUserAdded() {
-        userService.add(new User("test1", "test1"));
-        userService.add(new User("test2", "test2"));
+        userService.add(user1);
+        userService.add(user2);
 
         List<User> users = userService.getAll();
 
@@ -68,9 +67,34 @@ public class UserServiceTest {
 
 //        Надо делать так потому, что иначе после первого неверного Assertions юнит тест прекращается и не проверяет след Assertions
         assertAll(
-                () -> MatcherAssert.assertThat(userMap, IsMapContaining.hasKey(0)),
-                () -> MatcherAssert.assertThat(users, hasSize(2))
+                () -> assertThat(userMap).containsKey(0),
+                () -> assertThat(users).hasSize(2)
         );
+    }
+
+    @Test
+    @Tag("login")
+    void loginSuccessIfUserExists() {
+        userService.add(user1);
+        Optional<User> user = userService.login(user1.getName(), user1.getPassword());
+        assertThat(user).isPresent();
+        user.ifPresent(u -> assertEquals(u, user1));
+    }
+
+    @Test
+    @Tag("login")
+    void loginFailIfPasswordIncorrect() {
+        userService.add(user1);
+        Optional<User> user = userService.login(user1.getName(), "dummy");
+        assertThat(user).isEmpty();
+    }
+
+    @Test
+    @Tag("login")
+    void loginFailIfNameIncorrect() {
+        userService.add(user1);
+        Optional<User> user = userService.login("dummy", user1.getPassword());
+        assertThat(user).isEmpty();
     }
 
     @Test
