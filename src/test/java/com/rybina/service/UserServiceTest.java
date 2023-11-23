@@ -16,6 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("user")
 @Tag("fast")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@TestMethodOrder(MethodOrderer.Random.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class) тесты вызываются в порядке, который мы задалив @Order(номер)
+//@TestMethodOrder(MethodOrderer.MethodName.class) тесты вызываются в алфавитном порядке
+//@TestMethodOrder(MethodOrderer.DisplayName.class) тесты вызываются в алфавитном порядке аннотаций, помеченных DisplayName
 @ExtendWith({
         UserServiceParamResolver.class
 })
@@ -45,12 +49,13 @@ public class UserServiceTest {
     }
 
     @Test
+//    @Order(0) для @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//    @DisplayName("name")
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
         assertThat(users).hasSize(0);
         assertThat(users).isEmpty();
-//        Assertions.assertTrue(user.isEmpty(), () -> "List should be empty");
     }
 
     @Test
