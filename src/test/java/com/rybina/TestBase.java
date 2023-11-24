@@ -1,5 +1,6 @@
 package com.rybina;
 
+import com.rybina.extentions.ConditionalExtention;
 import com.rybina.extentions.GlobalExtention;
 import com.rybina.extentions.PostProcessingExtension;
 import com.rybina.extentions.UserServiceParamResolver;
@@ -14,7 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith({
         UserServiceParamResolver.class,
         GlobalExtention.class,
-        PostProcessingExtension.class
+        PostProcessingExtension.class,
+        ConditionalExtention.class
 })
 public class TestBase {
 }
