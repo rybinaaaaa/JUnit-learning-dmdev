@@ -1,5 +1,6 @@
 package com.rybina.service;
 
+import com.rybina.TestBase;
 import com.rybina.extentions.GlobalExtention;
 import com.rybina.extentions.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
@@ -22,16 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 //эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
 @Tag("user")
 @Tag("fast")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-//@TestMethodOrder(MethodOrderer.Random.class)
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class) тесты вызываются в порядке, который мы задалив @Order(номер)
-//@TestMethodOrder(MethodOrderer.MethodName.class) тесты вызываются в алфавитном порядке
-//@TestMethodOrder(MethodOrderer.DisplayName.class) тесты вызываются в алфавитном порядке аннотаций, помеченных DisplayName
-@ExtendWith({
-        UserServiceParamResolver.class,
-        GlobalExtention.class
-})
-public class UserServiceTest {
+public class UserServiceTest extends TestBase {
     UserService userService;
     TestInfo testInfo;
 
