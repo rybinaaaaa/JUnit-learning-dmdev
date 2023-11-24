@@ -1,9 +1,6 @@
 package com.rybina;
 
-import com.rybina.extentions.ConditionalExtention;
-import com.rybina.extentions.GlobalExtention;
-import com.rybina.extentions.PostProcessingExtension;
-import com.rybina.extentions.UserServiceParamResolver;
+import com.rybina.extentions.*;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,7 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
         UserServiceParamResolver.class,
         GlobalExtention.class,
         PostProcessingExtension.class,
-        ConditionalExtention.class
+        ConditionalExtention.class,
+        ThrowableException.class
 })
 public class TestBase {
 }

@@ -9,7 +9,7 @@ public class ConditionalExtention implements ExecutionCondition {
     //    стоит ли нам вызывать этот тест??
     @Override
     public ConditionEvaluationResult evaluateExecutionCondition(ExtensionContext extensionContext) {
-        return System.getProperty("skip") != null
+        return System.getProperty("skip") == null
                 ? ConditionEvaluationResult.disabled("test is skipped")
                 : ConditionEvaluationResult.enabled("enabled by default");
     }

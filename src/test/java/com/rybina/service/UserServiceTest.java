@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -104,7 +105,8 @@ public class UserServiceTest extends TestBase {
 
         //      name - название методов на каждой итерации, value - кол-во итераций
         @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 5)
-        void loginFailIfPasswordIncorrect() {
+        void loginFailIfPasswordIncorrect() throws IOException {
+            if (true) throw new IOException();
             userService.add(user1);
             Optional<User> user = userService.login(user1.getName(), "dummy");
             assertThat(user).isEmpty();
