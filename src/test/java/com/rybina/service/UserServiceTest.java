@@ -8,10 +8,12 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,17 +96,21 @@ public class UserServiceTest {
 
     @Nested
     @Tag("login")
+    @Timeout(value = 200, unit = TimeUnit.MILLISECONDS)
     class LoginTest {
-//      name - название методов на каждой итерации, value - кол-во итераций
-        @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 5)
+        @Test
         void loginSuccessIfUserExists() {
             userService.add(user1);
-            Optional<User> user = userService.login(user1.getName(), user1.getPassword());
+            Optional<User> user = assertTimeout(Duration.ofMillis(100L), () -> {
+//                Thread.sleep(200);
+                return userService.login(user1.getName(), user1.getPassword());
+            });
             assertThat(user).isPresent();
             user.ifPresent(u -> assertEquals(u, user1));
         }
 
-        @Test
+        //      name - название методов на каждой итерации, value - кол-во итераций
+        @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 5)
         void loginFailIfPasswordIncorrect() {
             userService.add(user1);
             Optional<User> user = userService.login(user1.getName(), "dummy");
