@@ -1,10 +1,7 @@
 package com.rybina.service;
 
 import com.rybina.TestBase;
-import com.rybina.extentions.GlobalExtention;
-import com.rybina.extentions.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -21,7 +18,6 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-//эта аннотация означает, что мы создаем лишь один тест-класс для всех тестов для юзера
 @Tag("user")
 @Tag("fast")
 public class UserServiceTest extends TestBase {
@@ -50,8 +46,6 @@ public class UserServiceTest extends TestBase {
     }
 
     @Test
-//    @Order(0) для @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//    @DisplayName("name") для MethodOrderer.DisplayName.class
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
@@ -70,8 +64,6 @@ public class UserServiceTest extends TestBase {
         userMap.put(0, users.get(0));
         userMap.put(1, users.get(1));
 
-
-//        Надо делать так потому, что иначе после первого неверного Assertions юнит тест прекращается и не проверяет след Assertions
         assertAll(
                 () -> assertThat(userMap).containsKey(0),
                 () -> assertThat(users).hasSize(2)
@@ -96,17 +88,14 @@ public class UserServiceTest extends TestBase {
         void loginSuccessIfUserExists() {
             userService.add(user1);
             Optional<User> user = assertTimeout(Duration.ofMillis(100L), () -> {
-//                Thread.sleep(200);
                 return userService.login(user1.getName(), user1.getPassword());
             });
             assertThat(user).isPresent();
             user.ifPresent(u -> assertEquals(u, user1));
         }
 
-        //      name - название методов на каждой итерации, value - кол-во итераций
         @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 5)
         void loginFailIfPasswordIncorrect() throws IOException {
-            if (true) throw new IOException();
             userService.add(user1);
             Optional<User> user = userService.login(user1.getName(), "dummy");
             assertThat(user).isEmpty();
@@ -121,13 +110,6 @@ public class UserServiceTest extends TestBase {
 
         @Test
         void throwExceptionWhenUserPasswordIsNull() {
-//         try {
-//            userService.login("test", null);
-//            fail("login should throw an exception when password is null");
-//        } catch (IllegalArgumentException ex) {
-//            assertTrue(true);
-//        }
-
             assertAll(
                     () -> assertThrows(IllegalArgumentException.class, () -> userService.login("test", null)),
                     () -> assertThrows(IllegalArgumentException.class, () -> userService.login(null, "test"))
@@ -135,24 +117,7 @@ public class UserServiceTest extends TestBase {
         }
 
         @ParameterizedTest(name = "{arguments} test")
-//        Редко используемые
-//        @ArgumentsSource() - мы должны передать сюда класс implements ArgumentsProvider
-//        для NullSource, EmptySource, ValueSource, NullAndEmptySource допустим только один параметр!!!!
-//        @NullSource - подставляет null в параметр
-//        @EmptySource - подходит для массивов (в том числе для строк)
-//        @NullAndEmptySource
-//        @ValueSource(strings = {"name1", "name2"}) - по очереди вызовет фцию с name1 - 1 и с name2 - 2
-//        @EnumSource
-
-//        Часто используемый
         @MethodSource("com.rybina.service.UserServiceTest#getArgsForLoginTest")
-
-//        не можем передавать сложные данные в Csv
-//        @CsvFileSource(resources = "/login-test-data.csv", delimiter = ',', numLinesToSkip = 1)
-//        @CsvSource({
-//                "test1, test1",
-//                "test2, test2"
-//        })
         void loginParametrizedText(String name, String password, Optional<User> userToCompare) {
             userService.add(user1, user2);
 
