@@ -1,11 +1,11 @@
 package com.rybina.service;
 
-import com.rybina.paramResolver.UserServiceParamResolver;
+import com.rybina.extentions.GlobalExtention;
+import com.rybina.extentions.UserServiceParamResolver;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
@@ -28,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 //@TestMethodOrder(MethodOrderer.MethodName.class) тесты вызываются в алфавитном порядке
 //@TestMethodOrder(MethodOrderer.DisplayName.class) тесты вызываются в алфавитном порядке аннотаций, помеченных DisplayName
 @ExtendWith({
-        UserServiceParamResolver.class
+        UserServiceParamResolver.class,
+        GlobalExtention.class
 })
 public class UserServiceTest {
     UserService userService;

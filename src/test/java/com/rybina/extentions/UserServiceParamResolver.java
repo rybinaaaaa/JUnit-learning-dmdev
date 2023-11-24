@@ -1,4 +1,4 @@
-package com.rybina.paramResolver;
+package com.rybina.extentions;
 
 import com.rybina.service.UserService;
 import org.junit.jupiter.api.extension.ExtensionContext;
