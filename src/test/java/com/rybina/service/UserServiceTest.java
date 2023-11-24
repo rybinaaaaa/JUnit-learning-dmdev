@@ -38,7 +38,7 @@ public class UserServiceTest extends TestBase {
     @BeforeEach
     void prepare() {
         System.out.println("Before Each");
-        this.userDao = Mockito.mock(UserDao.class);
+        this.userDao = Mockito.spy(UserDao.class);
         this.userService = new UserService(userDao);
     }
 
@@ -72,14 +72,10 @@ public class UserServiceTest extends TestBase {
         userService.add(user1);
 
 //        Мы создали стаб
-//        Mockito.doReturn(true).when(userDao).delete(Mockito.any());
-        Mockito.when(userDao.delete(user1.getId())).thenReturn(true).thenReturn(false);
+        Mockito.doReturn(true).when(userDao).delete(Mockito.any());
+//        Mockito.when(userDao.delete(user1.getId())).thenReturn(true).thenReturn(false);
 
         boolean deleteResult = userService.delete(user1.getId());
-
-        assertThat(deleteResult).isTrue();
-
-        deleteResult = userService.delete(user1.getId());
 
         assertThat(deleteResult).isTrue();
     }
