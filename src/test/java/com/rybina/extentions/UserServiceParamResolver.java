@@ -18,6 +18,6 @@ public class UserServiceParamResolver implements ParameterResolver {
 //        кеширование
 //        Namespace - ключ для стора. раскрываем как hashmap
         var store = extensionContext.getStore(ExtensionContext.Namespace.create(UserService.class));
-        return store.getOrComputeIfAbsent(UserService.class, it -> new UserService());
+        return store.getOrComputeIfAbsent(UserService.class, it -> new UserService(null));
     }
 }

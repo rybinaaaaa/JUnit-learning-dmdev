@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
         GlobalExtention.class,
         PostProcessingExtension.class,
         ConditionalExtention.class,
-        ThrowableException.class
+//        ThrowableException.class
 })
 public class TestBase {
 }

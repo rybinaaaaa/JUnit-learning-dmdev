@@ -1,9 +1,20 @@
 package com.rybina.service;
 
+import com.rybina.dao.UserDao;
+
 import java.util.*;
 
 public class UserService {
     private List<User> users = new ArrayList<>();
+    private final UserDao userDao;
+
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
+    }
+
+    public boolean delete(Integer id) {
+        return userDao.delete(id);
+    }
 
     public List<User> getAll() {
         return users;

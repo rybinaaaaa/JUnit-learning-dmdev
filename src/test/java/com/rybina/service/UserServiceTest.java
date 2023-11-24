@@ -1,10 +1,12 @@
 package com.rybina.service;
 
 import com.rybina.TestBase;
+import com.rybina.dao.UserDao;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -18,19 +20,13 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Tag("user")
-@Tag("fast")
 public class UserServiceTest extends TestBase {
-    UserService userService;
-    TestInfo testInfo;
+    private UserService userService;
+    private UserDao userDao;
 
     private static final User user1 = new User("test1", "test1", 1);
     private static final User user2 = new User("test2", "test2", 2);
 
-    public UserServiceTest(TestInfo testInfo) {
-        this.testInfo = testInfo;
-        System.out.println(testInfo);
-    }
 
     @BeforeAll
     void init() {
@@ -40,9 +36,10 @@ public class UserServiceTest extends TestBase {
 
     //  ++ DI
     @BeforeEach
-    void prepare(UserService userService) {
+    void prepare() {
         System.out.println("Before Each");
-        this.userService = userService;
+        this.userDao = Mockito.mock(UserDao.class);
+        this.userService = new UserService(userDao);
     }
 
     @Test
@@ -68,6 +65,23 @@ public class UserServiceTest extends TestBase {
                 () -> assertThat(userMap).containsKey(0),
                 () -> assertThat(users).hasSize(2)
         );
+    }
+
+    @Test
+    void shouldDeleteExistingUser() {
+        userService.add(user1);
+
+//        Мы создали стаб
+//        Mockito.doReturn(true).when(userDao).delete(Mockito.any());
+        Mockito.when(userDao.delete(user1.getId())).thenReturn(true).thenReturn(false);
+
+        boolean deleteResult = userService.delete(user1.getId());
+
+        assertThat(deleteResult).isTrue();
+
+        deleteResult = userService.delete(user1.getId());
+
+        assertThat(deleteResult).isTrue();
     }
 
     @AfterEach
