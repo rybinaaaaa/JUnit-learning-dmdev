@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -94,8 +95,8 @@ public class UserServiceTest {
     @Nested
     @Tag("login")
     class LoginTest {
-        @Test
-        @Tag("login")
+//      name - название методов на каждой итерации, value - кол-во итераций
+        @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 5)
         void loginSuccessIfUserExists() {
             userService.add(user1);
             Optional<User> user = userService.login(user1.getName(), user1.getPassword());
@@ -104,7 +105,6 @@ public class UserServiceTest {
         }
 
         @Test
-        @Tag("login")
         void loginFailIfPasswordIncorrect() {
             userService.add(user1);
             Optional<User> user = userService.login(user1.getName(), "dummy");
@@ -112,7 +112,6 @@ public class UserServiceTest {
         }
 
         @Test
-        @Tag("login")
         void loginFailIfNameIncorrect() {
             userService.add(user1);
             Optional<User> user = userService.login("dummy", user1.getPassword());
@@ -120,7 +119,6 @@ public class UserServiceTest {
         }
 
         @Test
-        @Tag("login")
         void throwExceptionWhenUserPasswordIsNull() {
 //         try {
 //            userService.login("test", null);
@@ -146,19 +144,19 @@ public class UserServiceTest {
 //        @EnumSource
 
 //        Часто используемый
-//        @MethodSource("com.rybina.service.UserServiceTest#getArgsForLoginTest")
+        @MethodSource("com.rybina.service.UserServiceTest#getArgsForLoginTest")
 
 //        не можем передавать сложные данные в Csv
 //        @CsvFileSource(resources = "/login-test-data.csv", delimiter = ',', numLinesToSkip = 1)
-        @CsvSource({
-                "test1, test1",
-                "test2, test2"
-        })
-        void loginParametrizedText(String name, String password) {
+//        @CsvSource({
+//                "test1, test1",
+//                "test2, test2"
+//        })
+        void loginParametrizedText(String name, String password, Optional<User> userToCompare) {
             userService.add(user1, user2);
 
             Optional<User> user = userService.login(name, password);
-            assertThat(user).isPresent();
+            assertThat(user).isEqualTo(userToCompare);
         }
     }
 
