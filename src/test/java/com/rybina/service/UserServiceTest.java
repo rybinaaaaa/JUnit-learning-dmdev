@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -72,10 +73,23 @@ public class UserServiceTest extends TestBase {
         userService.add(user1);
 
 //        Мы создали стаб
-        Mockito.doReturn(true).when(userDao).delete(Mockito.any());
+        Mockito.doReturn(true).when(userDao).delete(user1.getId());
 //        Mockito.when(userDao.delete(user1.getId())).thenReturn(true).thenReturn(false);
 
         boolean deleteResult = userService.delete(user1.getId());
+
+//        проверить вызывался ли хоть раз метод delete с данным параметром
+        Mockito.verify(userDao).delete(user1.getId());
+//        Mockito.verify(userDao, Mockito.times(2)).delete(user1.getId());
+//        Mockito.verify(userDao, Mockito.atLeast(2)).delete(user1.getId());
+//        Mockito.verifyNoInteractions(userDao); - проверка не было ли взаимодействия с данным моком
+
+        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+
+        Mockito.verify(userDao).delete(argumentCaptor.capture());
+
+        assertThat(argumentCaptor.getValue()).isEqualTo(user1.getId());
+        assertThat(argumentCaptor.getValue()).isEqualTo(25);
 
         assertThat(deleteResult).isTrue();
     }
