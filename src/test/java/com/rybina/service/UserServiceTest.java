@@ -87,21 +87,16 @@ public class UserServiceTest extends TestBase {
     @Test
     void shouldDeleteExistingUser() {
         userService.add(user1);
+//        doReturn(true).when(userDao).delete(user1.getId());
 
-//        Мы создали стаб
-        Mockito.doReturn(true).when(userDao).delete(user1.getId());
-//        Mockito.when(userDao.delete(user1.getId())).thenReturn(true).thenReturn(false);
+        BDDMockito.given(userDao.delete(user1.getId())).willReturn(true);
+        BDDMockito.willReturn(true).given(userDao).delete(user1.getId());
 
         boolean deleteResult = userService.delete(user1.getId());
-
-//        проверить вызывался ли хоть раз метод delete с данным параметром
-//        Mockito.verify(userDao).delete(user1.getId());
 
         Mockito.verify(userDao).delete(argumentCaptor.capture());
 
         assertThat(argumentCaptor.getValue()).isEqualTo(user1.getId());
-//        assertThat(argumentCaptor.getValue()).isEqualTo(25);
-
         assertThat(deleteResult).isTrue();
     }
 
