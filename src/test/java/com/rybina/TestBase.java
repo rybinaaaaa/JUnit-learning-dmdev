@@ -3,6 +3,7 @@ package com.rybina;
 import com.rybina.extentions.*;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 //@TestMethodOrder(MethodOrderer.Random.class)
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
         GlobalExtention.class,
         PostProcessingExtension.class,
         ConditionalExtention.class,
+        MockitoExtension.class
 //        ThrowableException.class
 })
 public class TestBase {

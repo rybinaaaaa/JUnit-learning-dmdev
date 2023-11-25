@@ -6,7 +6,7 @@ import java.util.*;
 
 public class UserService {
     private List<User> users = new ArrayList<>();
-    private final UserDao userDao;
+    private UserDao userDao;
 
     public UserService(UserDao userDao) {
         this.userDao = userDao;
@@ -28,6 +28,4 @@ public class UserService {
     public void add(User... users) {
         this.users.addAll(List.of(users));
     }
-
-
 }

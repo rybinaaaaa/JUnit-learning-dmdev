@@ -6,8 +6,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.*;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -20,14 +19,22 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserServiceTest extends TestBase {
-    private UserService userService;
-    private UserDao userDao;
 
     private static final User user1 = new User("test1", "test1", 1);
     private static final User user2 = new User("test2", "test2", 2);
 
+    @Mock
+    private UserDao userDao;
+
+    @Captor
+    ArgumentCaptor<Integer> argumentCaptor;
+
+    @InjectMocks
+    private UserService userService;
 
     @BeforeAll
     void init() {
@@ -39,17 +46,26 @@ public class UserServiceTest extends TestBase {
     @BeforeEach
     void prepare() {
         System.out.println("Before Each");
-        this.userDao = Mockito.spy(UserDao.class);
-        this.userService = new UserService(userDao);
+//        this.userDao = Mockito.spy(UserDao.class);
+//        this.userService = new UserService(userDao);
     }
 
     @Test
+    @Order(1)
     void UsersEmptyIfNoAdded() {
         var users = userService.getAll();
 
         assertThat(users).hasSize(0);
         assertThat(users).isEmpty();
     }
+
+    @Test
+    void throwExceptionIfDatabaseIsNotAvailable() {
+        doThrow(RuntimeException.class).when(userDao).delete(user1.getId());
+
+        assertThrows(RuntimeException.class, () -> userService.delete(user1.getId()));
+    }
+
 
     @Test
     void UsesSizeIfUserAdded() {
@@ -79,17 +95,12 @@ public class UserServiceTest extends TestBase {
         boolean deleteResult = userService.delete(user1.getId());
 
 //        проверить вызывался ли хоть раз метод delete с данным параметром
-        Mockito.verify(userDao).delete(user1.getId());
-//        Mockito.verify(userDao, Mockito.times(2)).delete(user1.getId());
-//        Mockito.verify(userDao, Mockito.atLeast(2)).delete(user1.getId());
-//        Mockito.verifyNoInteractions(userDao); - проверка не было ли взаимодействия с данным моком
-
-        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+//        Mockito.verify(userDao).delete(user1.getId());
 
         Mockito.verify(userDao).delete(argumentCaptor.capture());
 
         assertThat(argumentCaptor.getValue()).isEqualTo(user1.getId());
-        assertThat(argumentCaptor.getValue()).isEqualTo(25);
+//        assertThat(argumentCaptor.getValue()).isEqualTo(25);
 
         assertThat(deleteResult).isTrue();
     }
